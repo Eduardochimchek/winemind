@@ -2,7 +2,8 @@ import requests
 import json
 
 # Dados de entrada para qualidade máxima
-input_data_perfect_quality = [0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9]
+input_data_perfect_quality = [7.83, 0.56, 0.29, 2.54, 0.09, 15.9, 46.47, 0.9967, 3.31, 0.66, 10.42, 7]  # Exemplo: classe de qualidade 7
+
 
 # URL da sua API Flask
 url = 'http://localhost:5000/predict'
