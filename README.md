@@ -57,6 +57,6 @@ python app.py
     "predicted_class": 6,
     "quality_label": "Bom"
   }
-  
+  ```
 
 Este README fornece uma visão geral do projeto, instruções de instalação, estrutura do projeto, como usar a rede neural e a API REST, além de informações sobre a licença. Certifique-se de personalizar as seções conforme necessário para o seu projeto específico.
