@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
-from model import Network, DenseLayer  # Importe seu modelo aqui
+from model import Network, DenseLayer
+import joblib
 
 app = Flask(__name__)
 
@@ -32,6 +33,9 @@ X, y = get_data("Wine_Quality_Data.csv", wine_color='red')
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
+# Salvar o scaler
+joblib.dump(scaler, 'scaler.pkl')
+
 # Separar dados em treino e validação
 X_train, X_val, y_train, y_val = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
 
@@ -43,25 +47,31 @@ model.add(DenseLayer(11, activation='softmax', l2_reg=0.1))  # Ajuste para 11 cl
 
 # Configurações para o treinamento
 epochs = 200  # Número de épocas
-learning_rates = [0.001, 0.01, 0.1]  # Diferentes taxas de aprendizado para testar
+learning_rates = 0.001  # Diferentes taxas de aprendizado para testar
 min_precision = 0.8  # Precisão mínima para parada antecipada
 
 # Loop sobre diferentes taxas de aprendizado
-for lr in learning_rates:
-    print(f"Treinando modelo com taxa de aprendizado: {lr}")
-    model.train(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epochs=epochs, lr=lr, min_precision=min_precision)
+print(f"Treinando modelo com taxa de aprendizado: {learning_rates}")
+model.train(X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epochs=epochs, lr=learning_rates, min_precision=min_precision)
 
-    # Avaliação final do modelo após treinamento
-    final_accuracy = model.accuracy[-1] * 100
-    final_precision = model.precision[-1] * 100
-    print(f"Taxa de aprendizado: {lr}, Precisão final: {final_precision:.2f}%")
+# Avaliação final do modelo após treinamento
+final_accuracy = model.accuracy[-1] * 100
+final_precision = model.precision[-1] * 100
 
-    # Verifique se atingiu a precisão mínima
-    if final_precision >= min_precision:
-        print(f"Modelo treinado com sucesso com precisão mínima de {min_precision * 100}%.")
-        break
-    else:
-        print(f"Modelo não atingiu a precisão mínima de {min_precision * 100}%. Tentando próxima taxa de aprendizado...")
+# Verifique se atingiu a precisão mínima
+if final_precision >= min_precision:
+    print(f"Modelo treinado com sucesso com precisão mínima de {min_precision * 100}%.")
+else:
+    print(f"Modelo não atingiu a precisão mínima de {min_precision * 100}%. Tentando próxima taxa de aprendizado...")
+
+# Salvar o modelo treinado
+joblib.dump(model, 'model.pkl')
+
+# Imprimir a classe mais alta e a menor
+highest_quality = np.max(y)
+lowest_quality = np.min(y)
+print(f"Classe mais alta: {highest_quality}")
+print(f"Classe mais baixa: {lowest_quality}")
 
 # Rota para previsão
 @app.route('/predict', methods=['POST'])
@@ -76,12 +86,18 @@ def predict():
         if len(input_data) != X_train.shape[1]:  # X_train é a matriz de características usada para treinamento
             raise ValueError("Número de características na entrada não corresponde aos dados de treinamento.")
 
+        # Carregar o scaler salvo
+        scaler = joblib.load('scaler.pkl')
+
         # Normalize os dados usando o scaler ajustado nos dados de treinamento
         input_data_scaled = scaler.transform(input_data.reshape(1, -1))
 
+        # Carregar o modelo treinado
+        model = joblib.load('model.pkl')
+
         # Realize previsões
         predictions = model.predict(input_data_scaled)
-        predicted_class = int(np.argmax(predictions, axis=1)) + 1  # Converta para escala de 1 a 10
+        predicted_class = np.argmax(predictions, axis=1).item() + 1  # Converta para escala de 1 a 10
 
         # Defina critérios de qualidade
         if predicted_class == 10:
@@ -93,7 +109,6 @@ def predict():
 
         app.logger.info('Classe prevista: %s', predicted_class)  # Log da classe prevista
 
-        # Retorne o resultado
         result = {'predicted_class': predicted_class, 'quality_label': quality_label}
         return jsonify(result)
     

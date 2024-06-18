@@ -1,9 +1,10 @@
 import requests
 import json
+import numpy as np
+import joblib
 
 # Dados de entrada para qualidade máxima
-input_data_perfect_quality = [7.83, 0.56, 0.29, 2.54, 0.09, 15.9, 46.47, 0.9967, 3.31, 0.66, 10.42, 7]  # Exemplo: classe de qualidade 7
-
+input_data_perfect_quality = [9.0, 0.3, 0.4, 2.0, 0.05, 20.0, 50.0, 1.0, 3.5, 0.8, 12.0, 10]
 
 # URL da sua API Flask
 url = 'http://localhost:5000/predict'
@@ -20,21 +21,10 @@ try:
     if response.status_code == 200:
         result = response.json()
         predicted_class = result['predicted_class']
-        
-        # Definir critérios de qualidade
-        if predicted_class == 10:
-            quality_label = "Muito bom"
-            is_good_quality = True
-        elif predicted_class >= 7:
-            quality_label = "Bom"
-            is_good_quality = True
-        else:
-            quality_label = "Não tão bom"
-            is_good_quality = False
+        quality_label = result['quality_label']
         
         print(f"Classe prevista: {predicted_class}")
         print(f"Qualidade do vinho: {quality_label}")
-        print(f"É de boa qualidade? {is_good_quality}")
     else:
         print('Erro na requisição:', response.text)
 except Exception as e:

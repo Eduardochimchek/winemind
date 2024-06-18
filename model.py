@@ -1,4 +1,5 @@
 import numpy as np
+import joblib
 
 class DenseLayer:
     def __init__(self, neurons, activation='relu', l2_reg=0.01):
@@ -232,5 +233,3 @@ class Network:
                                                         bias=self.params[i]['b'])
 
         return A_curr
-    
-    
