@@ -1,62 +1,54 @@
-# Projeto de Rede Neural com Flask
+# Rede Neural para Previsão da Qualidade de Vinho
 
-## Conteúdo
+Este é um projeto de uma aplicação Flask que utiliza uma rede neural para prever a qualidade do vinho com base em suas características. O modelo foi treinado utilizando dados de qualidade de vinho vermelho e implementa várias camadas densas com ativações diferentes.
 
-1. **Visão Geral do Projeto**
-2. **Instalação**
-3. **Estrutura do Projeto**
-4. **Como Usar**
-5. **API REST**
-6. **Licença**
+### Funcionalidades do Projeto
 
----
+- **Treinamento do Modelo**: A rede neural é treinada com dados de qualidade de vinho vermelho para prever a qualidade em uma escala de 1 a 10.
+- **Previsão**: Após o treinamento, a aplicação pode receber dados de entrada sobre as características do vinho e prever sua qualidade.
+- **Salvamento de Modelos e Scalers**: O modelo treinado e o scaler usado para normalização dos dados são salvos para uso posterior.
 
-## 1. Visão Geral do Projeto
+### Estrutura do Projeto
 
----
+- **`app.py`**: Contém o código principal da aplicação Flask, incluindo a definição das rotas e o código para fazer previsões com o modelo treinado.
+- **`model.py`**: Implementa a estrutura da rede neural (`Network` e `DenseLayer`) utilizada para treinar e fazer previsões.
+- **`Wine_Quality_Data.csv`**: Dataset utilizado para treinamento da rede neural, contendo informações sobre características e qualidade do vinho.
 
-## 2. Instalação
+### Pré-requisitos
 
-```bash
-# Clone o repositório:
-git clone https://github.com/seu-usuario/nome-do-repositorio.git
-cd nome-do-repositorio
+- Python 3.9 ou superior
+- Pacotes Python necessários estão listados no arquivo `requirements.txt`. Instale-os usando `pip install -r requirements.txt`.
 
-# Instale as dependências:
-# É recomendado criar um ambiente virtual antes de instalar as dependências.
-pip install -r requirements.txt
+### Instalação
 
-# Configuração do ambiente:
-# Certifique-se de ter o Python configurado corretamente. Versão recomendada: Python 3.x.
-|-- app.py                   # Arquivo principal da aplicação Flask
-|-- model.py                 # Implementação da rede neural
-|-- requirements.txt         # Lista de dependências Python
-|-- Wine_Quality_Data.csv    # Conjunto de dados de qualidade de vinho
-|-- README.md                # Documentação do projeto (você está aqui)
+1. Clone o repositório:
 
-# 1. Treinamento da Rede Neural:
-# Execute o script `train.py` para treinar a rede neural com o conjunto de dados de qualidade de vinho.
-python train.py
+   ```bash
+   git clone https://github.com/seu-usuario/nome-do-repositorio.git
+   cd nome-do-repositorio
 
-# 2. Iniciar o Servidor Flask:
-# Depois de treinar a rede neural, inicie o servidor Flask para servir a API REST.
-python app.py
+2 - Instale os requisitos:
 
-### Endpoint `/predict`
+    pip install -r requirements.txt
 
-- **Método:** POST
-- **URL:** `http://localhost:5000/predict`
-- **Corpo da Requisição:**
+### Uso
 
-  ```json
-  {
-    "data": [7.83, 0.56, 0.29, 2.54, 0.09, 15.9, 46.47, 0.9967, 3.31, 0.66, 10.42]
-  }
+1- Inicie o servidor Flask:
 
-  {
-    "predicted_class": 6,
-    "quality_label": "Bom"
-  }
-  ```
+    python app.py
 
-Este README fornece uma visão geral do projeto, instruções de instalação, estrutura do projeto, como usar a rede neural e a API REST, além de informações sobre a licença. Certifique-se de personalizar as seções conforme necessário para o seu projeto específico.
+2 - Faça uma requisição POST para http://localhost:5000/predict com os dados do vinho em formato JSON. Exemplo:
+
+    {
+        "data": [9.0, 0.3, 0.4, 2.0, 0.05, 20.0, 50.0, 1.0, 3.5, 0.8, 12.0, 10]
+    }
+
+3 - Receba a previsão de qualidade do vinho.
+
+### Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou pull requests para melhorias ou correções.
+
+### Licença
+
+Este projeto está licenciado sob a MIT License.
